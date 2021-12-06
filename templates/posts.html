@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Все статьи
+{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+    <h1>Js код</h1>
+
+    {% for el in articles %}
+    <div class="alert alert-info">
+        <h2>{{ el.title }}</h2>
+        <p>{{ el.intro }}</p>
+        <p><b>Дата: {{ el.date.date() }}</b></p>
+        <a href="/posts/del{{ el.id }}" class="btn btn-warning">Детальнее</a>
+    </div>
+    {% endfor %}
+    {% for post in articles.items %}
+    <p>
+      {{ post.post_name }} post body: <b>{{ post.body }}</b>
+    </p>
+    {% endfor %}
+    <nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link" href="/posts/1">1</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/2">2</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/3">3</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/4">4</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/5">5</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/6">6</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/7">7</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/8">8</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/9">9</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/10">10</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/11">11</a></li>
+    <li class="page-item"><a class="page-link" href="/posts/12">12</a></li>
+  </ul>
+</nav>
+</div>
+{% endblock %}
