@@ -17,6 +17,7 @@
         <a href="/posts/del{{ el.id }}" class="btn btn-warning">Детальнее</a>
     </div>
     {% endfor %}
+
     {% for post in articles.items %}
     <p>
       {{ post.post_name }} post body: <b>{{ post.body }}</b>

@@ -3,41 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import requests
 import json
+from flask import Blueprint
+from flask_paginate import Pagination
 # from bs4 import BeautifulSoup
 import pandas as pd
-import reports
+# 'page': '5',
 
-params = {
-    'dev_eui': '393935347B386F14',
-    'fport': '2',
-    'start_date': '2019-4-26',
-    'end_date': '2021-11-26',
-    'empty': 'false',
-    'utc': 'false',
-    'limit': '1000',
-    'offset': '0',
-    'page': '5',
-    'dir': 'up',
-}
-
-session = requests.Session()
-session.auth =('Sshyta@mail.ru', 'pass4Sshyta@mail.ru')
-resp = session.get ('https://server.air-bit.eu/api/data/', params=params)
-const = resp.content
-print(resp.url)
-print(const)
-
-# ret = reports.get('https://server.air-bit.eu/api/data/')
-# ret.encoding = 'utf-8'
-# s1 = ret.text
-# print(s1,type(s1))
-
-# <class 'str'>
-
-json.dump(resp, b, *, skipkeys=False, ensure_ascii=True,
-          check_circular=True, allow_nan=True, cls=None,
-          indent=None, separators=None, default=None,
-          sort_keys=False, **kw)
 
 
 app = Flask(__name__)
@@ -57,6 +28,15 @@ class Article(db.Model):
         return '<Article %r>' % self.idn
 
 
+class Data(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mac = db.Column(db.Integer, primary_key=False)
+    fport = db.Column(db.Integer, primary_key=False)
+    data = db.Column(db.String, primary_key=False)
+    created = db.Column(db.Integer, primary_key=False)
+
+    def __repr__(self):
+        return '<Data %r>' % self.idn
 
 # @app.route('/')
 #
@@ -68,14 +48,100 @@ class Article(db.Model):
 # @app.route('/')
 # @app.route('/home')
 # def index():
+note_lim = 15
+offset_lim = 0
 
 
-@app.route("/")
-@app.route('/home')
+@app.route('/')
 def index():
-    return resp.text
+    global note_lim
+    global offset_lim
+    params = {
+        'dev_eui': '393935347B386F14',
+        'fport': '2',
+        'start_date': '2019-4-26',
+        'end_date': '2021-11-26',
+        'empty': 'false',
+        'utc': 'false',
+        'limit': note_lim,
+        'offset': offset_lim,
+        'dir': '--',
+    }
+
+    session = requests.Session()
+    session.auth = ('Sshyta@mail.ru', 'pass4Sshyta@mail.ru')
+    resp = session.get('https://server.air-bit.eu/api/data/', params=params)
+    cont = resp.content
+    data = json.loads(cont)
+    list = data[0]
+    data_list = list['data']
+    return render_template('list.html', data_list=data_list)
 
 
+
+
+@app.route('/post')
+def post():
+
+    global note_lim
+    global offset_lim
+
+    note_lim = 15
+    offset_lim = offset_lim + 30
+
+    params = {
+        'dev_eui': '393935347B386F14',
+        'fport': '2',
+        'start_date': '2019-4-26',
+        'end_date': '2021-11-26',
+        'empty': 'false',
+        'utc': 'false',
+        'limit': note_lim,
+        'offset': offset_lim,
+        'dir': '--',
+    }
+
+    session = requests.Session()
+    session.auth = ('Sshyta@mail.ru', 'pass4Sshyta@mail.ru')
+    resp = session.get('https://server.air-bit.eu/api/data/', params=params)
+    cont = resp.content
+    data = json.loads(cont)
+    list = data[0]
+    data_list = list['data']
+    return render_template('list.html', data_list=data_list)
+
+
+@app.route('/pred')
+def pred():
+
+    global note_lim
+    global offset_lim
+
+    note_lim = 15
+    offset_lim = offset_lim - 30
+
+
+    params = {
+        'dev_eui': '393935347B386F14',
+        'fport': '2',
+        'start_date': '2019-4-26',
+        'end_date': '2021-11-26',
+        'empty': 'false',
+        'utc': 'false',
+        'limit': note_lim,
+        'offset': offset_lim,
+        'dir': '--',
+    }
+
+
+    session = requests.Session()
+    session.auth = ('Sshyta@mail.ru', 'pass4Sshyta@mail.ru')
+    resp = session.get('https://server.air-bit.eu/api/data/', params=params)
+    cont = resp.content
+    data = json.loads(cont)
+    list = data[0]
+    data_list = list['data']
+    return render_template('list.html', data_list=data_list)
 
 
 @app.route('/about')
